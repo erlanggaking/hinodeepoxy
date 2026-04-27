@@ -42,6 +42,16 @@ export default async function ArticlePage({ params }: Props) {
             <span className="px-2.5 py-0.5 text-xs font-medium rounded-md bg-h-blue-light text-h-blue">{article.category}</span>
             <span className="text-sm text-h-text-muted">{formatDate(article.date)} • {article.readTime}</span>
           </div>
+
+          <div className="mb-8 rounded-2xl overflow-hidden aspect-video shadow-lg">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img 
+              src={article.featuredImage || article.image || "https://images.unsplash.com/photo-1581094794329-c8112a89af12?q=80&w=800"} 
+              alt={article.title}
+              className="w-full h-full object-cover"
+            />
+          </div>
+
           <h1 className="text-3xl sm:text-4xl font-bold font-[family-name:var(--font-heading)] mb-5 leading-tight">{article.title}</h1>
           <p className="text-lg text-h-text-secondary border-l-4 border-h-blue pl-4 mb-8">{article.excerpt}</p>
           <div>{renderContent(article.content)}</div>

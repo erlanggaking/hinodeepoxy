@@ -79,7 +79,8 @@ Format output dalam JSON:
   "excerpt": "Ringkasan 1-2 kalimat",
   "content": "Konten artikel lengkap dalam format Markdown",
   "category": "Kategori artikel (Edukasi/Tips & Trik/Info Harga/Studi Kasus)",
-  "metaDescription": "Meta description 150-160 karakter"
+  "metaDescription": "Meta description 150-160 karakter",
+  "featuredImage": "URL gambar dari unsplash yang sangat relevan dengan topik ini (pilih yang profesional dan bertema industri/interior)"
 }`;
 
     const geminiRes = await fetch(
