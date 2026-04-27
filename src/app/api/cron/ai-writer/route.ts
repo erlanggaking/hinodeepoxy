@@ -91,7 +91,7 @@ Format output harus valid JSON:
         "X-Title": "HINODE EPOXY AI Writer",
       },
       body: JSON.stringify({
-        model: "google/gemini-flash-1.5", // Versi stabil & cepat
+        model: "openai/gpt-4o-mini", // Model paling stabil dan cerdas di OpenRouter
         messages: [
           { role: "system", content: SYSTEM_PROMPT },
           { role: "user", content: prompt }
