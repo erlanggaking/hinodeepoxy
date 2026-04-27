@@ -51,6 +51,13 @@ const KEYWORD_LIST = [
   "metallic epoxy floor indonesia",
 ];
 
+// OpenRouter models to try in order
+const MODELS_TO_TRY = [
+  "meta-llama/llama-3.3-70b-instruct:free", // Prioritas user
+  "openai/gpt-4o-mini",                     // Fallback stabil
+  "google/gemini-flash-1.5"                 // Backup terakhir
+];
+
 export async function GET(request: NextRequest) {
   // 1. Verify Cron Secret
   const authHeader = request.headers.get("authorization");
@@ -82,31 +89,49 @@ Format output harus valid JSON:
   "featuredImage": "PILIH URL GAMBAR DARI UNSPLASH bertema industrial/flooring. Format: https://images.unsplash.com/[PHOTO_ID]?q=80&w=800"
 }`;
 
-    // 3. Call OpenRouter API
-    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
-        "Content-Type": "application/json",
-        "X-Title": "HINODE EPOXY AI Writer",
-      },
-      body: JSON.stringify({
-        model: "meta-llama/llama-3.3-70b-instruct:free", // Model Llama terbaru & Gratis dari OpenRouter
-        messages: [
-          { role: "system", content: SYSTEM_PROMPT },
-          { role: "user", content: prompt }
-        ],
-        response_format: { type: "json_object" }
-      })
-    });
+    // 3. Try to call OpenRouter with Fallbacks
+    let article = null;
+    let lastError = null;
 
-    if (!response.ok) {
-      const err = await response.json();
-      throw new Error(`OpenRouter Error: ${JSON.stringify(err)}`);
+    for (const model of MODELS_TO_TRY) {
+      try {
+        console.log(`📡 Trying OpenRouter model: ${model}...`);
+        const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
+            "Content-Type": "application/json",
+            "X-Title": "HINODE EPOXY AI Writer",
+          },
+          body: JSON.stringify({
+            model: model,
+            messages: [
+              { role: "system", content: SYSTEM_PROMPT },
+              { role: "user", content: prompt }
+            ],
+            response_format: { type: "json_object" }
+          })
+        });
+
+        if (!response.ok) {
+          const err = await response.json();
+          throw new Error(`Model ${model} error: ${err.error?.message || "Unknown error"}`);
+        }
+
+        const data = await response.json();
+        article = JSON.parse(data.choices[0].message.content);
+        console.log(`✅ Success with model: ${model}`);
+        break; // Stop if success
+      } catch (e: any) {
+        console.warn(`⚠️ Model ${model} failed: ${e.message}`);
+        lastError = e;
+        // Continue to next model if it's a rate limit or other error
+      }
     }
 
-    const data = await response.json();
-    const article = JSON.parse(data.choices[0].message.content);
+    if (!article) {
+      throw new Error(`All OpenRouter models failed. Last error: ${lastError?.message}`);
+    }
 
     // 4. Save to JSON
     const articlesPath = path.join(process.cwd(), "src/data/articles.json");
@@ -129,7 +154,7 @@ Format output harus valid JSON:
     });
 
   } catch (error: any) {
-    console.error("OpenRouter AI Writer Error:", error);
+    console.error("OpenRouter AI Writer Final Error:", error);
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
 }
