@@ -76,6 +76,12 @@
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
   }
+  @keyframes scan-line {
+    0% { top: -5%; }
+    100% { top: 105%; }
+  }
+
+  --animate-scan-line: scan-line 4s linear infinite;
 }
 
 /* ===== Base Styles ===== */
