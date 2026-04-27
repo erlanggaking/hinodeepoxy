@@ -3,7 +3,7 @@ import fs from "fs/promises";
 import path from "path";
 
 // Configuration
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
 const CRON_SECRET = process.env.CRON_SECRET;
 
 const SYSTEM_PROMPT = `Kamu adalah penulis konten profesional untuk HINODE EPOXY, perusahaan jasa aplikator lantai epoxy yang melayani wilayah Jabodetabek, Jawa Barat, dan Banten.
@@ -51,14 +51,6 @@ const KEYWORD_LIST = [
   "metallic epoxy floor indonesia",
 ];
 
-// List of models to try in order of preference
-const MODELS_TO_TRY = [
-  "gemini-1.5-flash",
-  "gemini-1.5-flash-latest",
-  "gemini-1.5-pro",
-  "gemini-pro"
-];
-
 export async function GET(request: NextRequest) {
   // 1. Verify Cron Secret
   const authHeader = request.headers.get("authorization");
@@ -66,8 +58,8 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
   }
 
-  if (!GEMINI_API_KEY) {
-    return NextResponse.json({ success: false, error: "GEMINI_API_KEY not configured" }, { status: 500 });
+  if (!OPENROUTER_API_KEY) {
+    return NextResponse.json({ success: false, error: "OPENROUTER_API_KEY not configured" }, { status: 500 });
   }
 
   try {
@@ -76,11 +68,7 @@ export async function GET(request: NextRequest) {
     const dayOfYear = Math.floor((today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / 86400000);
     const keyword = KEYWORD_LIST[dayOfYear % KEYWORD_LIST.length];
 
-    console.log(`🤖 Triggering AI Writer for: ${keyword}`);
-
-    // 3. Generate Content with Fallback Models
-    let lastError = null;
-    let article = null;
+    console.log(`🤖 Triggering OpenRouter AI Writer for: ${keyword}`);
 
     const prompt = `Buatkan artikel SEO-friendly tentang topik: "${keyword}"
 
@@ -91,45 +79,34 @@ Format output harus valid JSON:
   "content": "Konten artikel lengkap dalam format Markdown",
   "category": "Kategori artikel (Edukasi/Tips & Trik/Info Harga/Studi Kasus)",
   "metaDescription": "Meta description 150-160 karakter",
-  "featuredImage": "PILIH URL GAMBAR DARI UNSPLASH yang berbeda setiap kali bertema industrial atau flooring. Format: https://images.unsplash.com/[PHOTO_ID]?q=80&w=800"
+  "featuredImage": "PILIH URL GAMBAR DARI UNSPLASH bertema industrial/flooring. Format: https://images.unsplash.com/[PHOTO_ID]?q=80&w=800"
 }`;
 
-    for (const model of MODELS_TO_TRY) {
-      try {
-        console.log(`📡 Trying model: ${model}...`);
-        const geminiRes = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              contents: [{ parts: [{ text: SYSTEM_PROMPT + "\n\n" + prompt }] }],
-              generationConfig: { temperature: 0.7, maxOutputTokens: 2048 },
-            }),
-          }
-        );
+    // 3. Call OpenRouter API
+    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
+        "Content-Type": "application/json",
+        "X-Title": "HINODE EPOXY AI Writer",
+      },
+      body: JSON.stringify({
+        model: "google/gemini-flash-1.5", // Versi stabil & cepat
+        messages: [
+          { role: "system", content: SYSTEM_PROMPT },
+          { role: "user", content: prompt }
+        ],
+        response_format: { type: "json_object" }
+      })
+    });
 
-        if (!geminiRes.ok) {
-          const err = await geminiRes.json();
-          throw new Error(`Model ${model} failed: ${err.error?.message}`);
-        }
-
-        const data = await geminiRes.json();
-        let text = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
-        text = text.replace(/```json/g, "").replace(/```/g, "").trim();
-        article = JSON.parse(text);
-        
-        console.log(`✅ Success with model: ${model}`);
-        break; // Stop if successful
-      } catch (e: any) {
-        console.warn(`⚠️ Model ${model} failed, trying next... Error: ${e.message}`);
-        lastError = e;
-      }
+    if (!response.ok) {
+      const err = await response.json();
+      throw new Error(`OpenRouter Error: ${JSON.stringify(err)}`);
     }
 
-    if (!article) {
-      throw new Error(`All models failed. Last error: ${lastError?.message}`);
-    }
+    const data = await response.json();
+    const article = JSON.parse(data.choices[0].message.content);
 
     // 4. Save to JSON
     const articlesPath = path.join(process.cwd(), "src/data/articles.json");
@@ -147,12 +124,12 @@ Format output harus valid JSON:
 
     return NextResponse.json({
       success: true,
-      message: "Article generated successfully",
+      message: "Article generated via OpenRouter successfully",
       article: { title: newArticle.title, slug: newArticle.slug }
     });
 
   } catch (error: any) {
-    console.error("AI Writer Final Error:", error);
+    console.error("OpenRouter AI Writer Error:", error);
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
 }
