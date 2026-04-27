@@ -89,16 +89,24 @@ Format output dalam JSON:
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          contents: [{ parts: [{ text: SYSTEM_PROMPT }, { text: prompt }] }],
-          generationConfig: { temperature: 0.7, maxOutputTokens: 2048, responseMimeType: "application/json" },
+          contents: [{ parts: [{ text: SYSTEM_PROMPT + "\n\n" + prompt }] }],
+          generationConfig: { temperature: 0.7, maxOutputTokens: 2048 },
         }),
       }
     );
 
-    if (!geminiRes.ok) throw new Error(`Gemini API Error: ${geminiRes.status}`);
+    if (!geminiRes.ok) {
+      const errorData = await geminiRes.json();
+      console.error("Gemini API Error Detail:", JSON.stringify(errorData, null, 2));
+      throw new Error(`Gemini API Error: ${geminiRes.status} - ${errorData.error?.message || "Unknown error"}`);
+    }
 
     const data = await geminiRes.json();
-    const article = JSON.parse(data.candidates?.[0]?.content?.parts?.[0]?.text);
+    let text = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+    
+    // Clean up potential markdown code blocks if the AI includes them
+    text = text.replace(/```json/g, "").replace(/```/g, "").trim();
+    const article = JSON.parse(text);
 
     // 4. Save to JSON (Note: On Vercel this is ephemeral!)
     const articlesPath = path.join(process.cwd(), "src/data/articles.json");
