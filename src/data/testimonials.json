@@ -1,0 +1,42 @@
+[
+  {
+    "id": "1",
+    "name": "Budi Santoso",
+    "role": "Plant Manager",
+    "company": "PT. Maju Bersama",
+    "location": "Cikarang, Bekasi",
+    "text": "Tim HINODE EPOXY sangat profesional. Lantai pabrik kami sekarang bersih, anti debu, dan tahan forklift. Pekerja juga merasa lebih nyaman bekerja di area yang telah di-epoxy.",
+    "rating": 5,
+    "project": "Heavy Duty Epoxy"
+  },
+  {
+    "id": "2",
+    "name": "Linda Wijaya",
+    "role": "Pemilik",
+    "company": "Revive Cafe & Bistro",
+    "location": "Kemang, Jakarta Selatan",
+    "text": "Lantai cafe saya sekarang terlihat sangat mewah dengan epoxy metallic dari HINODE. Banyak pelanggan yang memuji desain lantainya. Sangat puas dengan hasilnya!",
+    "rating": 5,
+    "project": "Self-Leveling Metallic"
+  },
+  {
+    "id": "3",
+    "name": "Ir. Hendra Kusuma",
+    "role": "Facility Manager",
+    "company": "RS. Harapan Sehat",
+    "location": "Tangerang, Banten",
+    "text": "Kami memilih HINODE karena pengalaman mereka di sektor kesehatan. Lantai epoxy anti bakteri mereka membantu kami memenuhi standar kebersihan rumah sakit. Pelayanan cepat dan tepat.",
+    "rating": 5,
+    "project": "Self-Leveling Anti-Bacterial"
+  },
+  {
+    "id": "4",
+    "name": "Agus Pramono",
+    "role": "Pemilik Rumah",
+    "company": "",
+    "location": "Pondok Indah, Jakarta Selatan",
+    "text": "Garasi rumah saya berubah total! Dari yang tadinya berdebu dan kusam, sekarang mengkilap seperti showroom. Terima kasih HINODE EPOXY!",
+    "rating": 5,
+    "project": "Epoxy Coating Decorative"
+  }
+]

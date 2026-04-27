@@ -1,0 +1,82 @@
+[
+  {
+    "id": "1",
+    "title": "Epoxy Self-Leveling Gudang Farmasi",
+    "location": "Cikarang, Bekasi",
+    "area": "1200 m²",
+    "type": "self-leveling",
+    "description": "Aplikasi epoxy self-leveling untuk gudang farmasi dengan standar kebersihan tinggi. Permukaan glossy anti bakteri.",
+    "year": "2025",
+    "duration": "14 hari"
+  },
+  {
+    "id": "2",
+    "title": "Heavy Duty Epoxy Pabrik Otomotif",
+    "location": "Karawang, Jawa Barat",
+    "area": "3500 m²",
+    "type": "heavy-duty",
+    "description": "Lantai epoxy heavy duty untuk area produksi pabrik otomotif. Tahan beban forklift dan bahan kimia industri.",
+    "year": "2025",
+    "duration": "21 hari"
+  },
+  {
+    "id": "3",
+    "title": "Epoxy Coating Parkiran Mall",
+    "location": "Tangerang, Banten",
+    "area": "5000 m²",
+    "type": "coating",
+    "description": "Epoxy coating anti slip untuk area parkiran mall dengan traffic kendaraan tinggi. Dilengkapi line marking.",
+    "year": "2024",
+    "duration": "30 hari"
+  },
+  {
+    "id": "4",
+    "title": "Self-Leveling Showroom Mobil Premium",
+    "location": "BSD City, Tangerang Selatan",
+    "area": "800 m²",
+    "type": "self-leveling",
+    "description": "Lantai epoxy high-gloss untuk showroom mobil premium. Finish mirror-like yang memantulkan cahaya sempurna.",
+    "year": "2025",
+    "duration": "10 hari"
+  },
+  {
+    "id": "5",
+    "title": "Heavy Duty Epoxy Cold Storage",
+    "location": "Cibitung, Bekasi",
+    "area": "2000 m²",
+    "type": "heavy-duty",
+    "description": "Epoxy heavy duty untuk cold storage dengan ketahanan suhu -25°C. Anti retak dan anti kelembaban.",
+    "year": "2024",
+    "duration": "18 hari"
+  },
+  {
+    "id": "6",
+    "title": "Epoxy Coating Workshop Bengkel",
+    "location": "Depok, Jawa Barat",
+    "area": "300 m²",
+    "type": "coating",
+    "description": "Epoxy coating untuk workshop bengkel dengan ketahanan terhadap oli dan cairan otomotif.",
+    "year": "2025",
+    "duration": "5 hari"
+  },
+  {
+    "id": "7",
+    "title": "Self-Leveling Cafe & Restaurant",
+    "location": "Kemang, Jakarta Selatan",
+    "area": "250 m²",
+    "type": "self-leveling",
+    "description": "Lantai epoxy artistik untuk cafe dengan desain metallic effect. Tampilan mewah dan mudah dibersihkan.",
+    "year": "2025",
+    "duration": "7 hari"
+  },
+  {
+    "id": "8",
+    "title": "Epoxy Coating Garasi Rumah Mewah",
+    "location": "Pondok Indah, Jakarta Selatan",
+    "area": "120 m²",
+    "type": "coating",
+    "description": "Epoxy coating premium untuk garasi rumah mewah dengan flake decorative dan clear coat protection.",
+    "year": "2024",
+    "duration": "3 hari"
+  }
+]
