@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 
 interface UploadedImage { filename: string; url: string; category: string; size: number; }
 
-type Tab = "upload" | "portfolio" | "testimonial" | "api";
+type Tab = "upload" | "portfolio" | "testimonial" | "prices" | "api";
 
 export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -16,6 +16,46 @@ export default function AdminPage() {
   const [category, setCategory] = useState("logo");
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [activeTab, setActiveTab] = useState<Tab>("upload");
+
+  // Prices form
+  const [prices, setPrices] = useState({ coating: "", selfLeveling: "", heavyDuty: "" });
+
+  const fetchPrices = useCallback(async () => {
+    try {
+      const res = await fetch("/api/settings/prices");
+      const result = await res.json();
+      if (result.success) {
+        setPrices({
+          coating: String(result.data.coating.pricePerM2),
+          selfLeveling: String(result.data.selfLeveling.pricePerM2),
+          heavyDuty: String(result.data.heavyDuty.pricePerM2),
+        });
+      }
+    } catch {}
+  }, []);
+
+  useEffect(() => {
+    if (activeTab === "prices") fetchPrices();
+  }, [activeTab, fetchPrices]);
+
+  const handlePriceSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const res = await fetch("/api/settings/prices", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(prices),
+      });
+      const result = await res.json();
+      if (result.success) {
+        setMessage({ type: "success", text: "Harga paket berhasil diperbarui!" });
+      } else {
+        setMessage({ type: "error", text: result.error });
+      }
+    } catch {
+      setMessage({ type: "error", text: "Gagal memperbarui harga." });
+    }
+  };
 
   // Check if already authenticated on load
   useEffect(() => {
@@ -119,6 +159,7 @@ export default function AdminPage() {
     { value: "upload", label: "Upload Foto", icon: "📷" },
     { value: "portfolio", label: "Portofolio", icon: "🏗️" },
     { value: "testimonial", label: "Testimoni", icon: "⭐" },
+    { value: "prices", label: "Harga Paket", icon: "💰" },
     { value: "api", label: "API", icon: "🔌" },
   ];
 
@@ -411,6 +452,46 @@ export default function AdminPage() {
               <button onClick={handleTestimonialSubmit} className="w-full py-2.5 bg-blue-600 text-white rounded-lg font-semibold text-sm hover:bg-blue-700 transition-colors">
                 Simpan Testimoni
               </button>
+            </div>
+          </div>
+        )}
+
+        {/* ===== PRICES TAB ===== */}
+        {activeTab === "prices" && (
+          <div className="max-w-md">
+            <h2 className="text-base font-semibold text-white mb-6">Kelola Harga Paket (Rp /m²)</h2>
+            <div className="card p-6">
+              <form onSubmit={handlePriceSubmit} className="space-y-5">
+                <div>
+                  <label className={labelClass}>Epoxy Coating</label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">Rp</span>
+                    <input type="number" value={prices.coating} onChange={(e) => setPrices({...prices, coating: e.target.value})} className={`${inputClass} pl-10`} />
+                  </div>
+                </div>
+                <div>
+                  <label className={labelClass}>Self-Leveling</label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">Rp</span>
+                    <input type="number" value={prices.selfLeveling} onChange={(e) => setPrices({...prices, selfLeveling: e.target.value})} className={`${inputClass} pl-10`} />
+                  </div>
+                </div>
+                <div>
+                  <label className={labelClass}>Heavy Duty</label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">Rp</span>
+                    <input type="number" value={prices.heavyDuty} onChange={(e) => setPrices({...prices, heavyDuty: e.target.value})} className={`${inputClass} pl-10`} />
+                  </div>
+                </div>
+                <button type="submit" className="w-full py-2.5 bg-blue-600 text-white rounded-lg font-semibold text-sm hover:bg-blue-700 transition-colors shadow-lg shadow-blue-900/20">
+                  Update Semua Harga
+                </button>
+              </form>
+              <div className="mt-6 p-4 bg-blue-500/5 border border-blue-500/10 rounded-lg">
+                <p className="text-xs text-blue-400/80 leading-relaxed">
+                  💡 Harga ini akan otomatis memperbarui kalkulator estimasi di halaman Layanan dan tampilan harga di seluruh website.
+                </p>
+              </div>
             </div>
           </div>
         )}

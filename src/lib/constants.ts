@@ -18,13 +18,11 @@ export const BRAND = {
   },
 } as const;
 
+import servicesData from "@/data/services.json";
+
 export const SERVICES = {
   coating: {
-    id: "coating",
-    name: "Epoxy Coating",
-    shortDesc: "Lapisan pelindung lantai dengan ketebalan 0.3-0.5mm",
-    pricePerM2: 150000,
-    minArea: 50,
+    ...servicesData.coating,
     features: [
       "Ketebalan 0.3 - 0.5 mm",
       "Anti debu & mudah dibersihkan",
@@ -35,11 +33,7 @@ export const SERVICES = {
     ideal: "Gudang, parkiran, workshop ringan",
   },
   selfLeveling: {
-    id: "self-leveling",
-    name: "Self-Leveling",
-    shortDesc: "Lantai epoxy rata sempurna dengan ketebalan 1-3mm",
-    pricePerM2: 350000,
-    minArea: 30,
+    ...servicesData.selfLeveling,
     features: [
       "Ketebalan 1 - 3 mm",
       "Permukaan rata sempurna (glossy/matte)",
@@ -51,11 +45,7 @@ export const SERVICES = {
     ideal: "Rumah sakit, laboratorium, showroom, cafe",
   },
   heavyDuty: {
-    id: "heavy-duty",
-    name: "Heavy Duty",
-    shortDesc: "Lantai epoxy extra tebal untuk beban berat 3-5mm",
-    pricePerM2: 550000,
-    minArea: 100,
+    ...servicesData.heavyDuty,
     features: [
       "Ketebalan 3 - 5 mm",
       "Tahan beban forklift & kendaraan berat",
@@ -66,7 +56,7 @@ export const SERVICES = {
     ],
     ideal: "Pabrik, cold storage, area loading dock",
   },
-} as const;
+};
 
 export const NAV_LINKS = [
   { href: "/", label: "Beranda" },
