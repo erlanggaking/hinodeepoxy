@@ -91,7 +91,7 @@ Format output harus valid JSON:
         "X-Title": "HINODE EPOXY AI Writer",
       },
       body: JSON.stringify({
-        model: "openai/gpt-4o-mini", // Model paling stabil dan cerdas di OpenRouter
+        model: "meta-llama/llama-3.3-70b-instruct:free", // Model Llama terbaru & Gratis dari OpenRouter
         messages: [
           { role: "system", content: SYSTEM_PROMPT },
           { role: "user", content: prompt }
