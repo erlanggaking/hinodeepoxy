@@ -5,99 +5,31 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import WhatsAppFloat from "@/components/layout/WhatsAppFloat";
 
-const inter = Inter({
-  variable: "--font-body",
-  subsets: ["latin"],
-  display: "swap",
-});
-
-const outfit = Outfit({
-  variable: "--font-heading",
-  subsets: ["latin"],
-  display: "swap",
-});
+const inter = Inter({ variable: "--font-body", subsets: ["latin"], display: "swap" });
+const outfit = Outfit({ variable: "--font-heading", subsets: ["latin"], display: "swap" });
 
 export const metadata: Metadata = {
-  title: {
-    default: "HINODE EPOXY - Jasa Epoxy Lantai Profesional Jabodetabek",
-    template: "%s | HINODE EPOXY",
-  },
-  description:
-    "Penyedia jasa aplikator lantai epoxy profesional untuk wilayah Jabodetabek, Jawa Barat, dan Banten. Coating, Self-Leveling, dan Heavy Duty. Gratis survei & estimasi!",
-  keywords: [
-    "jasa epoxy lantai",
-    "kontraktor epoxy jakarta",
-    "harga epoxy per meter",
-    "epoxy coating",
-    "self-leveling epoxy",
-    "lantai epoxy pabrik",
-    "epoxy jabodetabek",
-    "HINODE EPOXY",
-  ],
-  authors: [{ name: "HINODE EPOXY" }],
-  creator: "HINODE EPOXY",
-  openGraph: {
-    type: "website",
-    locale: "id_ID",
-    url: "https://hinodeepoxy.com",
-    siteName: "HINODE EPOXY",
-    title: "HINODE EPOXY - Jasa Epoxy Lantai Profesional Jabodetabek",
-    description:
-      "Solusi lantai epoxy profesional untuk industri, komersial, & residensial. Gratis survei & estimasi harga!",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "HINODE EPOXY - Jasa Epoxy Lantai Profesional",
-    description:
-      "Solusi lantai epoxy profesional untuk industri, komersial, & residensial.",
-  },
-  robots: {
-    index: true,
-    follow: true,
-  },
+  title: { default: "HINODE EPOXY - Jasa Epoxy Lantai Profesional Jabodetabek", template: "%s | HINODE EPOXY" },
+  description: "Penyedia jasa aplikator lantai epoxy profesional untuk wilayah Jabodetabek, Jawa Barat, dan Banten. Coating, Self-Leveling, dan Heavy Duty. Gratis survei & estimasi!",
+  keywords: ["jasa epoxy lantai", "kontraktor epoxy jakarta", "harga epoxy per meter", "epoxy coating", "self-leveling epoxy", "HINODE EPOXY"],
+  openGraph: { type: "website", locale: "id_ID", siteName: "HINODE EPOXY" },
+  robots: { index: true, follow: true },
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="id" className={`${inter.variable} ${outfit.variable} h-full`}>
       <head>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "LocalBusiness",
-              name: "HINODE EPOXY",
-              description:
-                "Penyedia jasa aplikator lantai epoxy profesional untuk wilayah Jabodetabek, Jawa Barat, dan Banten.",
-              url: "https://hinodeepoxy.com",
-              telephone: "+6281287370601",
-              address: {
-                "@type": "PostalAddress",
-                streetAddress: "Kalideres",
-                addressLocality: "Jakarta Barat",
-                addressRegion: "DKI Jakarta",
-                addressCountry: "ID",
-              },
-              areaServed: [
-                "Jakarta",
-                "Bogor",
-                "Depok",
-                "Tangerang",
-                "Bekasi",
-                "Bandung",
-                "Banten",
-              ],
-              priceRange: "Rp 120.000 - Rp 650.000 per m²",
-            }),
-          }}
-        />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          "@context": "https://schema.org", "@type": "LocalBusiness", name: "HINODE EPOXY",
+          description: "Penyedia jasa aplikator lantai epoxy profesional untuk wilayah Jabodetabek.",
+          telephone: "+6281287370601",
+          address: { "@type": "PostalAddress", streetAddress: "Kalideres", addressLocality: "Jakarta Barat", addressRegion: "DKI Jakarta", addressCountry: "ID" },
+          areaServed: ["Jakarta", "Bogor", "Depok", "Tangerang", "Bekasi", "Bandung", "Banten"],
+          priceRange: "Rp 120.000 - Rp 650.000 per m²",
+        })}} />
       </head>
-      <body className="min-h-full flex flex-col antialiased font-[family-name:var(--font-body)]">
+      <body className="min-h-full flex flex-col antialiased font-[family-name:var(--font-body)] bg-h-bg text-h-text">
         <Navbar />
         <main className="flex-1">{children}</main>
         <Footer />
