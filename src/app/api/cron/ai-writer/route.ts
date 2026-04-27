@@ -51,11 +51,13 @@ const KEYWORD_LIST = [
   "metallic epoxy floor indonesia",
 ];
 
-// OpenRouter models to try in order
+// OpenRouter models to try - Focus on FREE and CHEAP models
 const MODELS_TO_TRY = [
-  "meta-llama/llama-3.3-70b-instruct:free", // Prioritas user
-  "openai/gpt-4o-mini",                     // Fallback stabil
-  "google/gemini-flash-1.5"                 // Backup terakhir
+  "meta-llama/llama-3.3-70b-instruct:free",
+  "google/gemini-flash-1.5-8b:free",        // Model gratis yang stabil
+  "meta-llama/llama-3.1-8b-instruct:free",  // Model gratis alternatif
+  "openai/gpt-4o-mini",                     // Berbayar tapi super murah
+  "qwen/qwen-2.5-72b-instruct:free"         // Model gratis cerdas
 ];
 
 export async function GET(request: NextRequest) {
@@ -109,7 +111,8 @@ Format output harus valid JSON:
               { role: "system", content: SYSTEM_PROMPT },
               { role: "user", content: prompt }
             ],
-            response_format: { type: "json_object" }
+            response_format: { type: "json_object" },
+            max_tokens: 3000 // PEMBATASAN TOKEN BIAR MURAH/MUAT DI KREDIT GRATIS
           })
         });
 
@@ -125,7 +128,6 @@ Format output harus valid JSON:
       } catch (e: any) {
         console.warn(`⚠️ Model ${model} failed: ${e.message}`);
         lastError = e;
-        // Continue to next model if it's a rate limit or other error
       }
     }
 
