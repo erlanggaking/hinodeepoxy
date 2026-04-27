@@ -51,6 +51,14 @@ const KEYWORD_LIST = [
   "metallic epoxy floor indonesia",
 ];
 
+// List of models to try in order of preference
+const MODELS_TO_TRY = [
+  "gemini-1.5-flash",
+  "gemini-1.5-flash-latest",
+  "gemini-1.5-pro",
+  "gemini-pro"
+];
+
 export async function GET(request: NextRequest) {
   // 1. Verify Cron Secret
   const authHeader = request.headers.get("authorization");
@@ -70,45 +78,60 @@ export async function GET(request: NextRequest) {
 
     console.log(`🤖 Triggering AI Writer for: ${keyword}`);
 
-    // 3. Generate Content via Gemini
+    // 3. Generate Content with Fallback Models
+    let lastError = null;
+    let article = null;
+
     const prompt = `Buatkan artikel SEO-friendly tentang topik: "${keyword}"
 
-Format output dalam JSON:
+Format output harus valid JSON:
 {
   "title": "Judul artikel (mengandung keyword)",
   "excerpt": "Ringkasan 1-2 kalimat",
   "content": "Konten artikel lengkap dalam format Markdown",
   "category": "Kategori artikel (Edukasi/Tips & Trik/Info Harga/Studi Kasus)",
   "metaDescription": "Meta description 150-160 karakter",
-  "featuredImage": "PILIH URL GAMBAR DARI UNSPLASH yang berbeda setiap kali. Gunakan kata kunci seperti 'industrial-floor', 'epoxy', 'factory-interior', 'luxury-garage', atau 'polished-concrete' untuk mendapatkan gambar yang relevan. Format: https://images.unsplash.com/[PHOTO_ID]?q=80&w=800"
+  "featuredImage": "PILIH URL GAMBAR DARI UNSPLASH yang berbeda setiap kali bertema industrial atau flooring. Format: https://images.unsplash.com/[PHOTO_ID]?q=80&w=800"
 }`;
 
-    const geminiRes = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: SYSTEM_PROMPT + "\n\n" + prompt }] }],
-          generationConfig: { temperature: 0.7, maxOutputTokens: 2048 },
-        }),
-      }
-    );
+    for (const model of MODELS_TO_TRY) {
+      try {
+        console.log(`📡 Trying model: ${model}...`);
+        const geminiRes = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: SYSTEM_PROMPT + "\n\n" + prompt }] }],
+              generationConfig: { temperature: 0.7, maxOutputTokens: 2048 },
+            }),
+          }
+        );
 
-    if (!geminiRes.ok) {
-      const errorData = await geminiRes.json();
-      console.error("Gemini API Error Detail:", JSON.stringify(errorData, null, 2));
-      throw new Error(`Gemini API Error: ${geminiRes.status} - ${errorData.error?.message || "Unknown error"}`);
+        if (!geminiRes.ok) {
+          const err = await geminiRes.json();
+          throw new Error(`Model ${model} failed: ${err.error?.message}`);
+        }
+
+        const data = await geminiRes.json();
+        let text = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+        text = text.replace(/```json/g, "").replace(/```/g, "").trim();
+        article = JSON.parse(text);
+        
+        console.log(`✅ Success with model: ${model}`);
+        break; // Stop if successful
+      } catch (e: any) {
+        console.warn(`⚠️ Model ${model} failed, trying next... Error: ${e.message}`);
+        lastError = e;
+      }
     }
 
-    const data = await geminiRes.json();
-    let text = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
-    
-    // Clean up potential markdown code blocks if the AI includes them
-    text = text.replace(/```json/g, "").replace(/```/g, "").trim();
-    const article = JSON.parse(text);
+    if (!article) {
+      throw new Error(`All models failed. Last error: ${lastError?.message}`);
+    }
 
-    // 4. Save to JSON (Note: On Vercel this is ephemeral!)
+    // 4. Save to JSON
     const articlesPath = path.join(process.cwd(), "src/data/articles.json");
     const currentArticles = JSON.parse(await fs.readFile(articlesPath, "utf-8"));
     
@@ -124,12 +147,12 @@ Format output dalam JSON:
 
     return NextResponse.json({
       success: true,
-      message: "Article generated and saved successfully",
+      message: "Article generated successfully",
       article: { title: newArticle.title, slug: newArticle.slug }
     });
 
   } catch (error: any) {
-    console.error("AI Writer Cron Error:", error);
+    console.error("AI Writer Final Error:", error);
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
 }
