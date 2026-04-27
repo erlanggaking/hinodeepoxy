@@ -80,7 +80,7 @@ Format output dalam JSON:
   "content": "Konten artikel lengkap dalam format Markdown",
   "category": "Kategori artikel (Edukasi/Tips & Trik/Info Harga/Studi Kasus)",
   "metaDescription": "Meta description 150-160 karakter",
-  "featuredImage": "URL gambar dari unsplash yang sangat relevan dengan topik ini (pilih yang profesional dan bertema industri/interior)"
+  "featuredImage": "PILIH URL GAMBAR DARI UNSPLASH yang berbeda setiap kali. Gunakan kata kunci seperti 'industrial-floor', 'epoxy', 'factory-interior', 'luxury-garage', atau 'polished-concrete' untuk mendapatkan gambar yang relevan. Format: https://images.unsplash.com/[PHOTO_ID]?q=80&w=800"
 }`;
 
     const geminiRes = await fetch(
