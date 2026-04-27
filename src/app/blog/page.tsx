@@ -20,7 +20,7 @@ export default function BlogPage() {
       </section>
       <section className="section-padding bg-white">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {articles.map((article) => (
+          {articles.map((article: any) => (
             <Link key={article.slug} href={`/blog/${article.slug}`} className="card overflow-hidden hover-lift group">
               <div className="h-48 bg-h-bg-alt relative overflow-hidden">
                 {/* eslint-disable-next-line @next/next/no-img-element */}

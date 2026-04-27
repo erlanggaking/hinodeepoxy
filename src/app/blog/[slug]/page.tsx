@@ -9,7 +9,7 @@ type Props = { params: Promise<{ slug: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const article = articles.find((a) => a.slug === slug);
+  const article = articles.find((a) => a.slug === slug) as any;
   if (!article) return { title: "Artikel Tidak Ditemukan" };
   return { title: article.title, description: article.excerpt, openGraph: { title: article.title, description: article.excerpt, type: "article", publishedTime: article.date } };
 }
@@ -18,9 +18,9 @@ export async function generateStaticParams() { return articles.map((a) => ({ slu
 
 export default async function ArticlePage({ params }: Props) {
   const { slug } = await params;
-  const article = articles.find((a) => a.slug === slug);
+  const article = articles.find((a) => a.slug === slug) as any;
   if (!article) notFound();
-  const related = articles.filter((a) => a.slug !== slug).slice(0, 3);
+  const related = articles.filter((a) => a.slug !== slug).slice(0, 3) as any[];
 
   const renderContent = (content: string) => content.split("\n\n").map((block, i) => {
     if (block.startsWith("## ")) return <h2 key={i} className="text-xl font-bold font-[family-name:var(--font-heading)] mt-8 mb-3">{block.replace("## ", "")}</h2>;
