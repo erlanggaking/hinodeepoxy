@@ -18,7 +18,7 @@
 // ============= CONFIGURATION =============
 
 const CONFIG = {
-  geminiApiKey: process.env.GEMINI_API_KEY || "AIzaSyDwDL1yo2ppmKPML7cE2k_lRCMkyoooxLs",
+  geminiApiKey: process.env.GEMINI_API_KEY,
   apiBaseUrl: process.env.API_BASE_URL || "http://localhost:3000",
   systemPrompt: `Kamu adalah penulis konten profesional untuk HINODE EPOXY, perusahaan jasa aplikator lantai epoxy yang melayani wilayah Jabodetabek, Jawa Barat, dan Banten.
 
